@@ -55,7 +55,7 @@ declares" with grounded, version-correct citations — without the operator hand
 | Phase | Theme | Primary code surface | Status |
 |------|-------|----------------------|--------|
 | 0 | Fork foundations & sync hygiene | repo meta, CI, benchmark baseline | ⬜ |
-| 1 | Source-code intelligence (Kotlin/Java/Dart) | `src/splitter/treesitter/` | 🟡 java done, kotlin next |
+| 1 | Source-code intelligence (Kotlin/Java/Dart) | `src/splitter/treesitter/` | 🟡 java + kotlin done, dart deferred |
 | 2 | Ecosystem package registries | `src/scraper/strategies/` | ⬜ |
 | 3 | API-doc pipelines (Javadoc/KDoc/Dartdoc) | `src/scraper/middleware/`, `pipelines/` | ⬜ |
 | 4 | Project-aware version resolution | `src/tools/`, new manifest parsers | ⬜ |
@@ -128,11 +128,13 @@ signatures and doc comments — exactly the content an assistant needs intact.
   unit + end-to-end tested. Handles classes, interfaces, enums, records, annotation
   types, methods, constructors, Javadoc, and package/import. Also fixed `.java` MIME
   routing in `mimeTypeUtils.ts` (`text/x-java`) so it reaches the SourceCodePipeline.
-- ⬜ **KotlinParser** — `tree-sitter-kotlin@0.3.8` (fwcd, peer `tree-sitter ^0.21.0`
-  ✅) on the current core; handle `.kt`/`.kts`, KDoc (`/** … */`), top-level
-  functions, `object`/`companion`, extension functions, `data class`, annotations.
-  Do **not** adopt `@tree-sitter-grammars/tree-sitter-kotlin@1.1.0` (needs core
-  `^0.22.4`) without a scheduled core upgrade + TS/Python re-validation.
+- ✅ **KotlinParser** — `tree-sitter-kotlin@0.3.8` (fwcd, peer `tree-sitter ^0.21.0`)
+  on the current core. Implemented in `src/splitter/treesitter/parsers/KotlinParser.ts`,
+  registered, and unit + end-to-end tested. Handles `.kt`/`.kts`, KDoc, top-level +
+  extension functions, `object`/`companion object`, `data class`, `enum class`, and
+  interfaces (told apart via `enum_class_body` / declaration-header keyword).
+  Did **not** adopt `@tree-sitter-grammars/tree-sitter-kotlin@1.1.0` (needs core
+  `^0.22.4`) — that stays gated behind a scheduled core upgrade + TS/Python re-validation.
 - ❄️ **DartParser** — deferred. No usable npm grammar (only NAN-based `tree-sitter-dart@1.0.0`,
   fails to load: `Invalid language object`). Interim: route `.dart` through
   `TextDocumentSplitter` with a warning; revisit via vendored/self-built grammar.

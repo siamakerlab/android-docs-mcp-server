@@ -98,7 +98,7 @@ The JsonPipeline validates JSON structure and applies hierarchical splitting tha
 
 ## Source Code
 
-The SourceCodePipeline handles programming languages with language detection. TypeScript, JavaScript, Python, and Java use full tree-sitter AST parsing for structure-aware splitting. All other languages use line-based splitting.
+The SourceCodePipeline handles programming languages with language detection. TypeScript, JavaScript, Python, Java, and Kotlin use full tree-sitter AST parsing for structure-aware splitting. All other languages use line-based splitting.
 
 ### Languages with AST-Aware Splitting
 
@@ -112,6 +112,7 @@ These languages use tree-sitter for semantic boundary detection (function, class
 | JSX | `.jsx` |
 | Python | `.py`, `.pyw`, `.pyi` |
 | Java | `.java` |
+| Kotlin | `.kt`, `.kts` |
 
 ### Languages with Line-Based Splitting
 
@@ -127,8 +128,7 @@ These languages are recognized and processed with line-based splitting:
 | | Nim | `.nim` |
 | | V | `.v` |
 | | Crystal | `.cr` |
-| JVM | Kotlin | `.kt`, `.kts` |
-| | Scala | `.scala` |
+| JVM | Scala | `.scala` |
 | | Groovy | `.groovy`, `.gradle` |
 | .NET | C# | `.cs` |
 | Apple/Mobile | Swift | `.swift` |

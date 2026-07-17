@@ -83,8 +83,12 @@ a follow-up sub-task rather than a Phase 1 blocker.
       (and normalizes mime-db's `text/x-java-source`), so it reaches the
       SourceCodePipeline instead of the plain-text fallback. Without this the parser
       never runs. (Regression covered in `mimeTypeUtils.test.ts`.)
+- [x] Implement `KotlinParser` (`tree-sitter-kotlin@0.3.8`) — done: registered in
+      `LanguageParserRegistry.ts`, unit-tested in `KotlinParser.test.ts`, and proven
+      end-to-end (a `.kt` file splits into package/import/class/method/companion/
+      companion-fn/data-class boundaries). `.kt`/`.kts` already routed to
+      `text/x-kotlin`, so no MIME fix was needed (unlike Java).
 - [ ] Re-run the grammar load test on **Node 22** and record the result here
       (validated on Node 24 so far; N-API makes this low-risk).
-- [ ] Implement `KotlinParser` (`tree-sitter-kotlin@0.3.8`) likewise.
 - [ ] Decide Dart path (options above); wire `.dart` fallback + warning meanwhile.
 - [ ] Add the chosen grammars to the Phase 7 Docker build check.
