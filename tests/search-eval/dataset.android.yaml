@@ -1,0 +1,99 @@
+# Android-focused search-quality benchmark dataset (this fork).
+#
+# status: draft — entries were authored from common Android/Kotlin/Flutter community
+# questions and knowledge of each library's docs structure. Every entry needs a human
+# pass (and a scrape of the target corpus) before it becomes an official baseline. URLs
+# use canonical doc-site paths; javadoc.io uses the scrapeable `/static/…` path (the
+# `/doc/…` page is a Vue wrapper — see docs/spikes/javadoc-io-scraping.md).
+#
+# Grades:
+#   3 = canonical doc page for the query
+#   2 = closely related / partial answer
+#   1 = peripheral / supporting context
+#
+# Intents:
+#   api-lookup, conceptual, comparison, troubleshooting
+#
+# Run (once the corpora are indexed):
+#   DOCS_EVAL_DATASET=tests/search-eval/dataset.android.yaml \
+#     npm run evaluate:search:baseline
+
+status: draft
+notes: |
+  Authored 2026-07-17 as the initial Android-focused dataset for this fork. Covers the
+  Kotlin, Jetpack/AndroidX, JVM (OkHttp), Flutter/Dart, and Gradle ecosystems across the
+  four intents. URLs are best-effort canonical paths and MUST be verified against a real
+  scrape before use as a gated baseline.
+
+entries:
+  # --- Kotlin (kotlinlang.org) ---
+  - vars:
+      library: kotlin
+      query: launch vs async coroutine builders
+      intent: comparison
+      qrels:
+        - { url: "https://kotlinlang.org/docs/composing-suspending-functions.html", grade: 3 }
+        - { url: "https://kotlinlang.org/docs/coroutines-basics.html", grade: 2 }
+  - vars:
+      library: kotlin
+      query: collect a Flow
+      intent: api-lookup
+      qrels:
+        - { url: "https://kotlinlang.org/docs/flow.html", grade: 3 }
+  - vars:
+      library: kotlin
+      query: what is a data class
+      intent: conceptual
+      qrels:
+        - { url: "https://kotlinlang.org/docs/data-classes.html", grade: 3 }
+
+  # --- Jetpack Compose (developer.android.com) ---
+  - vars:
+      library: compose
+      query: remember state in a composable
+      intent: api-lookup
+      qrels:
+        - { url: "https://developer.android.com/develop/ui/compose/state", grade: 3 }
+  - vars:
+      library: compose
+      query: scrollable list LazyColumn
+      intent: api-lookup
+      qrels:
+        - { url: "https://developer.android.com/develop/ui/compose/lists", grade: 3 }
+
+  # --- OkHttp (javadoc.io /static/) ---
+  - vars:
+      library: okhttp
+      query: connection pool configuration
+      intent: api-lookup
+      qrels:
+        - { url: "https://javadoc.io/static/com.squareup.okhttp3/okhttp/4.12.0/okhttp/okhttp3/-connection-pool/index.html", grade: 3 }
+        - { url: "https://javadoc.io/static/com.squareup.okhttp3/okhttp/4.12.0/okhttp/okhttp3/-ok-http-client/index.html", grade: 2 }
+
+  # --- Flutter / Dart (pub.dev) ---
+  - vars:
+      library: provider
+      query: ChangeNotifierProvider usage
+      intent: api-lookup
+      qrels:
+        - { url: "https://pub.dev/documentation/provider/latest/provider/ChangeNotifierProvider-class.html", grade: 3 }
+  - vars:
+      library: provider
+      query: how does Provider rebuild widgets
+      intent: conceptual
+      qrels:
+        - { url: "https://pub.dev/documentation/provider/latest/provider/Provider-class.html", grade: 2 }
+
+  # --- Gradle (docs.gradle.org) ---
+  - vars:
+      library: gradle
+      query: dependency version catalog libs.versions.toml
+      intent: conceptual
+      qrels:
+        - { url: "https://docs.gradle.org/current/userguide/version_catalogs.html", grade: 3 }
+  - vars:
+      library: gradle
+      query: configuration cache troubleshooting
+      intent: troubleshooting
+      qrels:
+        - { url: "https://docs.gradle.org/current/userguide/configuration_cache.html", grade: 3 }

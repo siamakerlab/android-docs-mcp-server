@@ -59,7 +59,7 @@ declares" with grounded, version-correct citations — without the operator hand
 | 2 | Ecosystem package registries | `src/scraper/strategies/` | ✅ 5 host strategies + docUrl mapping |
 | 3 | API-doc pipelines (Javadoc/KDoc/Dartdoc) | `src/scraper/middleware/` | 🟡 chrome removal (real-HTML verified) |
 | 4 | Project-aware version resolution | `src/manifest/`, `src/tools/` | ✅ parsers + resolve/scrape-project + search wiring |
-| 5 | Search quality tuning for Android | `tests/search-eval/`, retriever | ⬜ |
+| 5 | Search quality tuning for Android | `tests/search-eval/` | 🟡 android qrel dataset (draft) |
 | 6 | Agent Skills & developer experience | `skills/`, docs, CLI ergonomics | ⬜ |
 | 7 | Distribution & pre-seeded indexes | Docker, release pipeline | ⬜ |
 
@@ -301,10 +301,15 @@ nDCG@k, Hit@k, plus LLM-judged scores) and `DocumentRetrieverService.ts` (hybrid
 RRF weights, FTS query generation, overfetch factor).
 
 **Tasks**
-- ⬜ Build an **Android qrel dataset** (labelled queries over Kotlin/AGP/Flutter
-  docs) and set it as the gated baseline.
+- 🟡 **Android qrel dataset** — `tests/search-eval/dataset.android.yaml`: 10 labelled
+  queries across Kotlin, Jetpack Compose, OkHttp, Flutter/Dart, and Gradle over all four
+  intents (api-lookup / conceptual / comparison / troubleshooting), same schema as the
+  upstream dataset. **Draft** — best-effort canonical URLs (javadoc.io uses the
+  scrapeable `/static/` path); needs a human pass and a real scrape of the corpora
+  before it can gate regressions.
 - ⬜ Tune RRF weights / FTS generation for symbol-heavy queries
-  (`Modifier.padding`, `viewModelScope`, `implementation(libs...)`).
+  (`Modifier.padding`, `viewModelScope`, `implementation(libs...)`). Blocked on the
+  Android corpora being indexed and the qrel dataset finalized.
 - ⬜ Evaluate embedding-provider behavior on code-ish text; document recommended
   provider/model defaults for Android use in `docs/guides/embedding-models.md`.
 
