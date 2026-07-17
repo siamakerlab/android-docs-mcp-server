@@ -279,6 +279,7 @@ export class MimeTypeUtils {
       cr: "text/x-crystal",
 
       // JVM languages
+      java: "text/x-java",
       kt: "text/x-kotlin",
       kts: "text/x-kotlin", // Kotlin script
       scala: "text/x-scala",
@@ -431,6 +432,7 @@ export class MimeTypeUtils {
       "application/rls-services+xml": "text/x-rust", // .rs files
       "application/vnd.lotus-organizer": "text/x-org", // .org files (Lotus Organizer conflict)
       "application/vnd.dart": "text/x-dart", // .dart files
+      "text/x-java-source": "text/x-java", // .java files (mime-db default)
       "application/x-perl": "text/x-perl", // .pl/.pm files
       "application/x-tex": "text/x-tex", // .tex files
       "application/x-latex": "text/x-latex", // .latex files

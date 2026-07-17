@@ -55,7 +55,7 @@ declares" with grounded, version-correct citations — without the operator hand
 | Phase | Theme | Primary code surface | Status |
 |------|-------|----------------------|--------|
 | 0 | Fork foundations & sync hygiene | repo meta, CI, benchmark baseline | ⬜ |
-| 1 | Source-code intelligence (Kotlin/Java/Dart) | `src/splitter/treesitter/` | 🟡 grammar spike done |
+| 1 | Source-code intelligence (Kotlin/Java/Dart) | `src/splitter/treesitter/` | 🟡 java done, kotlin next |
 | 2 | Ecosystem package registries | `src/scraper/strategies/` | ⬜ |
 | 3 | API-doc pipelines (Javadoc/KDoc/Dartdoc) | `src/scraper/middleware/`, `pipelines/` | ⬜ |
 | 4 | Project-aware version resolution | `src/tools/`, new manifest parsers | ⬜ |
@@ -123,9 +123,11 @@ signatures and doc comments — exactly the content an assistant needs intact.
 > a line-based fallback. Decisions below reflect that.
 
 **Tasks**
-- ⬜ **JavaParser** (implement first) — `tree-sitter-java@0.23.5` (official, peer
-  `tree-sitter ^0.21.1` ✅); handle `.java`, Javadoc, nested classes, annotations,
-  enums, interfaces.
+- ✅ **JavaParser** — `tree-sitter-java@0.23.5` (official, peer `tree-sitter ^0.21.1`).
+  Implemented in `src/splitter/treesitter/parsers/JavaParser.ts`, registered, and
+  unit + end-to-end tested. Handles classes, interfaces, enums, records, annotation
+  types, methods, constructors, Javadoc, and package/import. Also fixed `.java` MIME
+  routing in `mimeTypeUtils.ts` (`text/x-java`) so it reaches the SourceCodePipeline.
 - ⬜ **KotlinParser** — `tree-sitter-kotlin@0.3.8` (fwcd, peer `tree-sitter ^0.21.0`
   ✅) on the current core; handle `.kt`/`.kts`, KDoc (`/** … */`), top-level
   functions, `object`/`companion`, extension functions, `data class`, annotations.

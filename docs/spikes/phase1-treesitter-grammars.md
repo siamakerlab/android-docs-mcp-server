@@ -75,10 +75,16 @@ a follow-up sub-task rather than a Phase 1 blocker.
 
 ## Next actions
 
-- [ ] Re-run this load test on **Node 22** and record the result here.
-- [ ] Implement `JavaParser` (`src/splitter/treesitter/parsers/JavaParser.ts`) using
-      `TypeScriptParser.ts` / `PythonParser.ts` as templates; register in
-      `LanguageParserRegistry.ts`; add fixtures + `*.test.ts`.
-- [ ] Implement `KotlinParser` likewise.
+- [x] Implement `JavaParser` (`src/splitter/treesitter/parsers/JavaParser.ts`) —
+      done: registered in `LanguageParserRegistry.ts`, unit-tested in
+      `JavaParser.test.ts`, and proven end-to-end (a `.java` file splits into
+      package/import/class/constructor/method boundaries via `SourceCodePipeline`).
+- [x] Fix `.java` MIME routing — `mimeTypeUtils.ts` now maps `.java` → `text/x-java`
+      (and normalizes mime-db's `text/x-java-source`), so it reaches the
+      SourceCodePipeline instead of the plain-text fallback. Without this the parser
+      never runs. (Regression covered in `mimeTypeUtils.test.ts`.)
+- [ ] Re-run the grammar load test on **Node 22** and record the result here
+      (validated on Node 24 so far; N-API makes this low-risk).
+- [ ] Implement `KotlinParser` (`tree-sitter-kotlin@0.3.8`) likewise.
 - [ ] Decide Dart path (options above); wire `.dart` fallback + warning meanwhile.
 - [ ] Add the chosen grammars to the Phase 7 Docker build check.

@@ -6,6 +6,7 @@
  */
 
 import { defaults } from "../../utils/config";
+import { JavaParser } from "./parsers/JavaParser";
 import { PythonParser } from "./parsers/PythonParser";
 import { TypeScriptParser } from "./parsers/TypeScriptParser";
 import type { LanguageParser } from "./parsers/types";
@@ -154,5 +155,9 @@ export class LanguageParserRegistry {
     // Register Python parser
     const pythonParser = new PythonParser(limit);
     this.registerParser(pythonParser);
+
+    // Register Java parser (Android/JVM ecosystem)
+    const javaParser = new JavaParser(limit);
+    this.registerParser(javaParser);
   }
 }

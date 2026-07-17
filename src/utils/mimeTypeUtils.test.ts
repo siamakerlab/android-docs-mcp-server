@@ -134,6 +134,7 @@ describe("MimeTypeUtils", () => {
     it("should correctly identify source code", () => {
       expect(MimeTypeUtils.isSourceCode("text/x-typescript")).toBe(true);
       expect(MimeTypeUtils.isSourceCode("text/x-python")).toBe(true);
+      expect(MimeTypeUtils.isSourceCode("text/x-java")).toBe(true);
       expect(MimeTypeUtils.isSourceCode("text/plain")).toBe(false);
     });
   });
@@ -305,6 +306,10 @@ describe("MimeTypeUtils", () => {
       });
 
       it("should detect JVM languages", () => {
+        expect(MimeTypeUtils.detectMimeTypeFromPath("Main.java")).toBe("text/x-java");
+        // mime-db returns text/x-java-source for .java over HTTP; normalize to text/x-java
+        // so it routes through SourceCodePipeline like path-based detection does.
+        expect(MimeTypeUtils.normalizeMimeType("text/x-java-source")).toBe("text/x-java");
         expect(MimeTypeUtils.detectMimeTypeFromPath("Main.kt")).toBe("text/x-kotlin");
         expect(MimeTypeUtils.detectMimeTypeFromPath("build.kts")).toBe("text/x-kotlin");
         expect(MimeTypeUtils.detectMimeTypeFromPath("Main.scala")).toBe("text/x-scala");
