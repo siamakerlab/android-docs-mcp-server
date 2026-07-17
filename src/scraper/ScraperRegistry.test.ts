@@ -3,8 +3,10 @@ import { loadConfig } from "../utils/config";
 import { ScraperError } from "../utils/errors";
 import { ScraperRegistry } from "./ScraperRegistry";
 import { GitHubScraperStrategy } from "./strategies/GitHubScraperStrategy";
+import { JavadocScraperStrategy } from "./strategies/JavadocScraperStrategy";
 import { LocalFileStrategy } from "./strategies/LocalFileStrategy";
 import { NpmScraperStrategy } from "./strategies/NpmScraperStrategy";
+import { PubDevScraperStrategy } from "./strategies/PubDevScraperStrategy";
 import { PyPiScraperStrategy } from "./strategies/PyPiScraperStrategy";
 import { WebScraperStrategy } from "./strategies/WebScraperStrategy";
 
@@ -41,6 +43,20 @@ describe("ScraperRegistry", () => {
     const registry = new ScraperRegistry(appConfig);
     const strategy = registry.getStrategy("https://pypi.org/project/test");
     expect(strategy).toBeInstanceOf(PyPiScraperStrategy);
+  });
+
+  it("should return PubDevScraperStrategy for pub.dev URLs", () => {
+    const registry = new ScraperRegistry(appConfig);
+    const strategy = registry.getStrategy("https://pub.dev/packages/riverpod");
+    expect(strategy).toBeInstanceOf(PubDevScraperStrategy);
+  });
+
+  it("should return JavadocScraperStrategy for javadoc.io URLs", () => {
+    const registry = new ScraperRegistry(appConfig);
+    const strategy = registry.getStrategy(
+      "https://javadoc.io/doc/com.squareup.okhttp3/okhttp",
+    );
+    expect(strategy).toBeInstanceOf(JavadocScraperStrategy);
   });
 
   it("should return WebScraperStrategy for generic HTTP URLs", () => {

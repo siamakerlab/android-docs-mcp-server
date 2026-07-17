@@ -56,7 +56,7 @@ declares" with grounded, version-correct citations — without the operator hand
 |------|-------|----------------------|--------|
 | 0 | Fork foundations & sync hygiene | repo meta, CI, benchmark baseline | ⬜ |
 | 1 | Source-code intelligence (Kotlin/Java/Dart) | `src/splitter/treesitter/` | ✅ java + kotlin (dart: line-based, AST follow-up) |
-| 2 | Ecosystem package registries | `src/scraper/strategies/` | ⬜ |
+| 2 | Ecosystem package registries | `src/scraper/strategies/` | 🟡 pub.dev + javadoc.io done |
 | 3 | API-doc pipelines (Javadoc/KDoc/Dartdoc) | `src/scraper/middleware/`, `pipelines/` | ⬜ |
 | 4 | Project-aware version resolution | `src/tools/`, new manifest parsers | ⬜ |
 | 5 | Search quality tuning for Android | `tests/search-eval/`, retriever | ⬜ |
@@ -180,16 +180,20 @@ projects actually declare, the way upstream already does for npm and PyPI.
 register them in `src/scraper/ScraperRegistry.ts` behind new URL schemes/handlers.
 
 **Tasks**
-- ⬜ **Maven / Google Maven strategy** — resolve `group:artifact:version`
-  coordinates from Maven Central and Google's Maven repo (`dl.google.com/.../maven2`,
-  AndroidX/AGP artifacts); locate and ingest the artifact's documentation
-  (POM metadata, hosted Javadoc/KDoc, project pages).
-- ⬜ **pub.dev strategy** — resolve Dart/Flutter packages and their versioned
-  API docs / READMEs.
+- ✅ **javadoc.io strategy** — `JavadocScraperStrategy` recognizes `javadoc.io`, the
+  standard host for generated Javadoc/Dokka-KDoc of Maven Central artifacts
+  (versioned `/doc/{group}/{artifact}/{version}/` paths). Registry-tuned profile over
+  `WebScraperStrategy`, registered and tested.
+- ✅ **pub.dev strategy** — `PubDevScraperStrategy` recognizes `pub.dev` package pages
+  (Dart/Flutter). Registered and tested. Especially valuable since Dart source has no
+  AST parser yet (Phase 1).
+- ⬜ **Google Maven strategy** — `dl.google.com/.../maven2` (AndroidX/AGP). Deferred:
+  these artifacts have no canonical hosted doc page, so coordinate→docs URL mapping is
+  an open design question (see below). AndroidX docs largely live on developer.android.com.
 - ⬜ **Gradle Plugin Portal strategy** — resolve plugins by id + version.
 - ⬜ Introduce a coordinate-parsing utility so `ScrapeTool`/`FindVersionTool`
   accept ecosystem-native identifiers (`androidx.compose.ui:ui:1.x`,
-  `dart:pubspec` names, `com.android.application` plugin ids).
+  `dart:pubspec` names, `com.android.application` plugin ids). Ties into Phase 4.
 
 **Risks:** each registry has bespoke metadata/redirect behavior; Google Maven has
 no human doc index per artifact — may need to map coordinates → docs site.

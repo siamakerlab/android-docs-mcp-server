@@ -3,8 +3,10 @@ import { ScraperError } from "../utils/errors";
 import { logger } from "../utils/logger";
 import { validateUrl } from "../utils/url";
 import { GitHubScraperStrategy } from "./strategies/GitHubScraperStrategy";
+import { JavadocScraperStrategy } from "./strategies/JavadocScraperStrategy";
 import { LocalFileStrategy } from "./strategies/LocalFileStrategy";
 import { NpmScraperStrategy } from "./strategies/NpmScraperStrategy";
+import { PubDevScraperStrategy } from "./strategies/PubDevScraperStrategy";
 import { PyPiScraperStrategy } from "./strategies/PyPiScraperStrategy";
 import { WebScraperStrategy } from "./strategies/WebScraperStrategy";
 import type { ScraperStrategy } from "./types";
@@ -48,6 +50,16 @@ export class ScraperRegistry {
       return new PyPiScraperStrategy(this.config);
     }
 
+    if (isPubDevUrl(url)) {
+      logger.debug(`Using strategy "PubDevScraperStrategy" for URL: ${url}`);
+      return new PubDevScraperStrategy(this.config);
+    }
+
+    if (isJavadocUrl(url)) {
+      logger.debug(`Using strategy "JavadocScraperStrategy" for URL: ${url}`);
+      return new JavadocScraperStrategy(this.config);
+    }
+
     if (isGitHubUrl(url)) {
       logger.debug(`Using strategy "GitHubScraperStrategy" for URL: ${url}`);
       return new GitHubScraperStrategy(this.config);
@@ -79,6 +91,24 @@ function isPyPiUrl(url: string): boolean {
   try {
     const { hostname } = new URL(url);
     return ["pypi.org", "www.pypi.org"].includes(hostname);
+  } catch {
+    return false;
+  }
+}
+
+function isPubDevUrl(url: string): boolean {
+  try {
+    const { hostname } = new URL(url);
+    return ["pub.dev", "www.pub.dev"].includes(hostname);
+  } catch {
+    return false;
+  }
+}
+
+function isJavadocUrl(url: string): boolean {
+  try {
+    const { hostname } = new URL(url);
+    return ["javadoc.io", "www.javadoc.io"].includes(hostname);
   } catch {
     return false;
   }
