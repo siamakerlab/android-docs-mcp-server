@@ -58,7 +58,7 @@ declares" with grounded, version-correct citations — without the operator hand
 | 1 | Source-code intelligence (Kotlin/Java/Dart) | `src/splitter/treesitter/` | ✅ java + kotlin (dart: line-based, AST follow-up) |
 | 2 | Ecosystem package registries | `src/scraper/strategies/` | 🟡 pub.dev + javadoc.io + gradle-plugins done |
 | 3 | API-doc pipelines (Javadoc/KDoc/Dartdoc) | `src/scraper/middleware/`, `pipelines/` | ⬜ |
-| 4 | Project-aware version resolution | `src/tools/`, new manifest parsers | ⬜ |
+| 4 | Project-aware version resolution | `src/manifest/`, `src/tools/` | 🟡 gradle catalog + pubspec parsers |
 | 5 | Search quality tuning for Android | `tests/search-eval/`, retriever | ⬜ |
 | 6 | Agent Skills & developer experience | `skills/`, docs, CLI ergonomics | ⬜ |
 | 7 | Distribution & pre-seeded indexes | Docker, release pipeline | ⬜ |
@@ -239,12 +239,15 @@ versions a project declares, instead of asking the user to specify them.
 expose a new tool in `src/tools/` (inherited by CLI/MCP/Web).
 
 **Tasks**
-- ⬜ Parsers for **Gradle Version Catalogs** (`gradle/libs.versions.toml`),
-  **`build.gradle` / `build.gradle.kts`** dependency + plugin blocks,
-  **`settings.gradle(.kts)`**, and **`pubspec.yaml` / `pubspec.lock`**.
-- ⬜ New tool `resolve-project-deps` (working name): given a project root, emit the
-  resolved coordinate→version set, and offer to scrape/search against those
-  versions via the Phase 2 registries.
+- 🟡 Manifest parsers (`src/manifest/`) — **done:** Gradle Version Catalog
+  (`gradle/libs.versions.toml`, via `smol-toml`) and Flutter `pubspec.yaml`
+  (`yaml`), both pure and unit-tested, normalizing to a flat
+  coordinate→version list tagged by ecosystem (`maven` / `gradle-plugin` / `pub`).
+  **Follow-up:** `build.gradle(.kts)` + `settings.gradle(.kts)` (regex, best-effort)
+  and `pubspec.lock`.
+- ⬜ New tool `resolve-project-deps` (working name): given a project root, discover
+  and parse the manifests, emit the resolved coordinate→version set, and offer to
+  scrape/search against those versions via the Phase 2 registries.
 - ⬜ Wire resolved versions into `SearchTool` so queries default to the project's
   versions when a project context is provided.
 
