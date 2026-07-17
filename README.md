@@ -25,14 +25,14 @@ See the **[ROADMAP](ROADMAP.md)** for the detailed, phased plan to get there.
 
 These commands use features this fork adds on top of upstream (the
 `resolve-project-deps` / `scrape-project` commands and Kotlin/Java AST chunking).
-It's published to npm under the `android` dist-tag (requires **Node.js 22+**):
+It's published to npm (requires **Node.js 22+**):
 
 ```bash
 # Run on demand with npx …
-npx @siamakerlab/android-docs-mcp-server@android <command> [args]
+npx @siamakerlab/android-docs-mcp-server <command> [args]
 
 # … or install globally to get the `docs-mcp-server` command used below.
-npm install -g @siamakerlab/android-docs-mcp-server@android
+npm install -g @siamakerlab/android-docs-mcp-server
 ```
 
 Add it to an MCP client (Claude Desktop / Claude Code). Set `OPENAI_API_KEY` (or
@@ -43,7 +43,7 @@ another embedding provider) in `env` for semantic search:
   "mcpServers": {
     "android-docs": {
       "command": "npx",
-      "args": ["-y", "@siamakerlab/android-docs-mcp-server@android", "--protocol", "stdio"]
+      "args": ["-y", "@siamakerlab/android-docs-mcp-server", "--protocol", "stdio"]
     }
   }
 }

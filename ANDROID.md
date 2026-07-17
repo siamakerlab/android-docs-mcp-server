@@ -55,18 +55,18 @@ Parse a project's build manifests and drive version-correct docs:
 
 ## Versioning
 
-Follow SemVer with a fork-lineage pre-release suffix while the public API tracks
-upstream: `<upstream-base>-android.<n>` (e.g. `2.4.2-android.1`). Record the upstream
-base commit in `CHANGELOG.md` on each sync. Switch to an independent line (e.g.
-`3.0.0`) only once the fork's public API diverges from upstream.
+This fork versions **independently on a 0.x line** (pre-1.0, active development),
+starting at `0.1.1`, decoupled from upstream's version numbers. Bump 0.x normally
+(`0.1.x` for patches, `0.2.0` for features) and reserve `1.0.0` for the first stable
+release. Record the upstream base commit in `CHANGELOG.md` on each sync.
 
 ## Distribution
 
-Published to npm as **`@siamakerlab/android-docs-mcp-server`** under the `android`
-dist-tag (renamed off upstream's `@arabold/docs-mcp-server`; `bin` kept as
-`docs-mcp-server`). Install with `npx @siamakerlab/android-docs-mcp-server@android` or
-`npm install -g`. Version follows the `<upstream-base>-android.<n>` scheme
-(`2.4.2-android.1`). Attribution to the original authors stays in `README.md` / `LICENSE`.
+Published to npm as **`@siamakerlab/android-docs-mcp-server`** (renamed off upstream's
+`@arabold/docs-mcp-server`; `bin` kept as `docs-mcp-server`). Install with
+`npx @siamakerlab/android-docs-mcp-server` or `npm install -g`. Versioned on the
+independent 0.x line (starting `0.1.1`). Attribution to the original authors stays in
+`README.md` / `LICENSE`.
 
 **Node 22 only** — `better-sqlite3` and the tree-sitter grammars ship Node-ABI-pinned
 binaries. The current dev environment runs Node 24; grammar/DB loading was validated

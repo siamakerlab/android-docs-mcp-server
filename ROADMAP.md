@@ -80,7 +80,7 @@ incomplete. Phases 2, 3, 5, 6, 7 can proceed in parallel once 1 lands.
   (`<upstream-base>-android.<n>`, e.g. `2.4.2-android.1`) while the API tracks upstream;
   switch to an independent line (`3.0.0`) once it diverges. Documented in `ANDROID.md`.
 - ✅ **Distributable identity** — published to npm as
-  `@siamakerlab/android-docs-mcp-server` (`android` dist-tag, `2.4.2-android.1`),
+  `@siamakerlab/android-docs-mcp-server` (independent 0.x line, `0.1.1`, `latest`),
   renamed off upstream's `@arabold/docs-mcp-server`; `bin` kept as `docs-mcp-server`.
 - ✅ **`ANDROID.md`** describing the Android-specific subsystems, sync, and versioning.
 - ➡️ Android retrieval **benchmark baseline** — moved to Phase 5 (`tests/search-eval/`),
