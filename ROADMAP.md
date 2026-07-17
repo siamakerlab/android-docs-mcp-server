@@ -54,7 +54,7 @@ declares" with grounded, version-correct citations — without the operator hand
 
 | Phase | Theme | Primary code surface | Status |
 |------|-------|----------------------|--------|
-| 0 | Fork foundations & sync hygiene | repo meta, CI, benchmark baseline | ⬜ |
+| 0 | Fork foundations & sync hygiene | repo meta, `ANDROID.md` | ✅ (benchmark → Phase 5) |
 | 1 | Source-code intelligence (Kotlin/Java/Dart) | `src/splitter/treesitter/` | ✅ java + kotlin (dart: line-based, AST follow-up) |
 | 2 | Ecosystem package registries | `src/scraper/strategies/` | 🟡 pub.dev + javadoc.io + gradle-plugins done |
 | 3 | API-doc pipelines (Javadoc/KDoc/Dartdoc) | `src/scraper/middleware/`, `pipelines/` | ⬜ |
@@ -74,25 +74,21 @@ incomplete. Phases 2, 3, 5, 6, 7 can proceed in parallel once 1 lands.
 **Goal:** make the fork identifiable, safe to diverge, and cheap to keep in sync.
 
 **Tasks**
-- ⬜ Establish an **upstream sync policy**: track `arabold/docs-mcp-server` as the
-  `upstream` remote; adopt a cadence (e.g. monthly) to merge/rebase; document the
-  conflict-prone files (core `src/index.ts`, `src/utils/config.ts`,
-  `ScraperRegistry.ts`, `LanguageParserRegistry.ts`).
-- ⬜ Decide **fork versioning**. Upstream is at `2.4.x`. Options: (a) continue
-  SemVer with a pre-release suffix that encodes the fork lineage
-  (`2.4.2-android.1`), or (b) hard-fork the version line at `3.0.0` and record the
-  upstream base commit in `CHANGELOG.md`. Recommendation: **(a)** until the fork's
-  public API diverges, then **(b)**.
-- ⬜ Rename the distributable identity where it must not collide with upstream's
-  npm package (`@arabold/docs-mcp-server`) — new scope or `bin` name for any
-  published artifact; leave attribution intact.
-- ⬜ Seed a **benchmark baseline for Android corpora** (`tests/search-eval/`) so
-  every later phase can prove it improves retrieval instead of regressing it.
-- ⬜ Add an `ANDROID.md` (or a section in `ARCHITECTURE.md`) describing the
-  Android-specific subsystems as they land.
+- ✅ **Upstream sync policy** — `upstream` remote tracks `arabold/docs-mcp-server`;
+  policy + conflict-prone file list documented in `ANDROID.md` ("Upstream sync policy").
+- ✅ **Fork versioning decided** — SemVer with a fork-lineage pre-release suffix
+  (`<upstream-base>-android.<n>`, e.g. `2.4.2-android.1`) while the API tracks upstream;
+  switch to an independent line (`3.0.0`) once it diverges. Documented in `ANDROID.md`.
+- 🟡 **Distributable identity** — documented (`ANDROID.md` "Distribution"): rename off
+  `@arabold/docs-mcp-server` before any npm publish. Deferred as an action until a
+  publish actually happens (Phase 7); not published today.
+- ✅ **`ANDROID.md`** describing the Android-specific subsystems, sync, and versioning.
+- ➡️ Android retrieval **benchmark baseline** — moved to Phase 5 (`tests/search-eval/`),
+  where the search-quality work lives.
 
-**Done when:** upstream can be pulled with a documented, low-conflict process and
-a reproducible Android retrieval baseline number exists.
+**Done when:** upstream can be pulled with a documented, low-conflict process, the
+fork's identity/versioning conventions are written down, and the Android subsystems are
+documented. ✅ (retrieval baseline tracked under Phase 5.)
 
 ---
 
