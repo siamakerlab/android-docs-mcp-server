@@ -20,7 +20,7 @@ describe("documentationUrl", () => {
           version: "4.12.0",
         }),
       ),
-    ).toBe("https://javadoc.io/doc/com.squareup.okhttp3/okhttp/4.12.0");
+    ).toBe("https://javadoc.io/static/com.squareup.okhttp3/okhttp/4.12.0/index.html");
   });
 
   it("maps a Maven coordinate without a pinned version to the latest doc page", () => {
@@ -63,9 +63,9 @@ describe("documentationUrl", () => {
 
   it("keeps prerelease pins but drops range/dynamic versions", () => {
     expect(documentationUrl(dep({ coordinate: "g:a", version: "1.0.0-alpha" }))).toBe(
-      "https://javadoc.io/doc/g/a/1.0.0-alpha",
+      "https://javadoc.io/static/g/a/1.0.0-alpha/index.html",
     );
-    // Dynamic / range versions are not path-safe pins.
+    // Dynamic / range versions are not path-safe pins → fall back to the /doc/ wrapper.
     expect(documentationUrl(dep({ coordinate: "g:a", version: "1.0.+" }))).toBe(
       "https://javadoc.io/doc/g/a",
     );

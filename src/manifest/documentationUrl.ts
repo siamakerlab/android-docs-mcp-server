@@ -40,8 +40,15 @@ export function documentationUrl(dep: ResolvedDependency): string | null {
       if (!group || !artifact) {
         return null;
       }
-      const base = `https://javadoc.io/doc/${group}/${artifact}`;
-      return version ? `${base}/${version}` : base;
+      // The bare `/doc/{group}/{artifact}[/{version}]` page is a Vue SPA wrapper that
+      // loads the real Javadoc/KDoc in an `<iframe src="/static/…/index.html">`, so it
+      // is not directly scrapeable. For a pinned version, point at the `/static/`
+      // documentation entry point instead. `/static/` requires a concrete version
+      // (there is no `latest`), so fall back to the `/doc/` wrapper when unpinned.
+      if (version) {
+        return `https://javadoc.io/static/${group}/${artifact}/${version}/index.html`;
+      }
+      return `https://javadoc.io/doc/${group}/${artifact}`;
     }
     case "pub": {
       const base = `https://pub.dev/packages/${dep.coordinate}`;

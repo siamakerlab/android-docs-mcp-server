@@ -181,9 +181,12 @@ register them in `src/scraper/ScraperRegistry.ts` behind new URL schemes/handler
 
 **Tasks**
 - ✅ **javadoc.io strategy** — `JavadocScraperStrategy` recognizes `javadoc.io`, the
-  standard host for generated Javadoc/Dokka-KDoc of Maven Central artifacts
-  (versioned `/doc/{group}/{artifact}/{version}/` paths). Registry-tuned profile over
-  `WebScraperStrategy`, registered and tested.
+  standard host for generated Javadoc/Dokka-KDoc of Maven Central artifacts.
+  Registry-tuned profile over `WebScraperStrategy`, registered and tested. Note: the
+  bare `/doc/…` page is a Vue SPA wrapper that loads the real docs in an iframe, so
+  `documentationUrl` targets the scrapeable `/static/{g}/{a}/{v}/index.html` entry point
+  for pinned versions — see
+  [`docs/spikes/javadoc-io-scraping.md`](docs/spikes/javadoc-io-scraping.md).
 - ✅ **pub.dev strategy** — `PubDevScraperStrategy` recognizes `pub.dev` package pages
   (Dart/Flutter). Registered and tested. Especially valuable since Dart source has no
   AST parser yet (Phase 1).
@@ -227,6 +230,14 @@ and `HtmlPipeline.ts`. Prefer new/tuned middleware over rewriting the chain.
 
 **Done when:** an indexed Javadoc/KDoc/Dartdoc page yields Markdown chunks whose
 signatures and descriptions survive intact, verified against fixtures.
+
+**Status (2026-07-17) — prerequisite resolved, cleanup deferred.** A spike found that
+javadoc.io serves a Vue wrapper at `/doc/…` and the real docs at `/static/…`, so
+`documentationUrl` now targets the scrapeable `/static/` entry point (Phase 2). The
+HTML-cleanup recognizers below should be tuned against **real `/static/` Javadoc/KDoc
+and Dartdoc HTML** — deferred until static pages are indexed and their actual chrome vs.
+content class structure can be sampled, to avoid guessing selectors. See
+[`docs/spikes/javadoc-io-scraping.md`](docs/spikes/javadoc-io-scraping.md).
 
 ---
 

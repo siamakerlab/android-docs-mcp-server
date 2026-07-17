@@ -33,7 +33,7 @@ command and AST chunking for Kotlin/Java are not in upstream.
 docs-mcp-server resolve-project-deps ./my-android-app --output json
 
 # 2. Index a dependency's docs at that version (paste a docUrl from step 1).
-docs-mcp-server scrape okhttp https://javadoc.io/doc/com.squareup.okhttp3/okhttp/4.12.0
+docs-mcp-server scrape okhttp https://javadoc.io/static/com.squareup.okhttp3/okhttp/4.12.0/index.html
 
 # 3. Index your own Kotlin/Java source with AST-aware, symbol-aligned chunking.
 docs-mcp-server scrape my-app file:///abs/path/to/my-android-app/app/src

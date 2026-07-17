@@ -50,7 +50,7 @@ dependencies {
 
     expect(byCoord["com.squareup.okhttp3:okhttp"]).toMatchObject({
       version: "4.12.0",
-      url: "https://javadoc.io/doc/com.squareup.okhttp3/okhttp/4.12.0",
+      url: "https://javadoc.io/static/com.squareup.okhttp3/okhttp/4.12.0/index.html",
       jobId: "job-1",
     });
     expect(byCoord["com.android.application"].url).toBe(
