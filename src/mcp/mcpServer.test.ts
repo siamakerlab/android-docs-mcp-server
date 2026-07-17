@@ -110,4 +110,36 @@ describe("MCP Server Read-Only Mode", () => {
       }),
     );
   });
+
+  it("should register scrape_docs with include/exclude patterns and propagate them", async () => {
+    const server = createMcpServerInstance(mockTools, mockConfig);
+    const scrapeTool = (server as any)._registeredTools.scrape_docs;
+
+    expect(scrapeTool).toBeDefined();
+
+    const parsed = scrapeTool.inputSchema.parse({
+      url: "https://developer.android.com/",
+      library: "android",
+      includePatterns: ["**/compose/**"],
+      excludePatterns: ["**/reference/**"],
+    });
+    expect(parsed.includePatterns).toEqual(["**/compose/**"]);
+    expect(parsed.excludePatterns).toEqual(["**/reference/**"]);
+
+    await scrapeTool.handler({
+      url: "https://developer.android.com/",
+      library: "android",
+      includePatterns: ["**/compose/**"],
+      excludePatterns: ["**/reference/**"],
+    });
+
+    expect(mockTools.scrape.execute).toHaveBeenCalledWith(
+      expect.objectContaining({
+        options: expect.objectContaining({
+          includePatterns: ["**/compose/**"],
+          excludePatterns: ["**/reference/**"],
+        }),
+      }),
+    );
+  });
 });

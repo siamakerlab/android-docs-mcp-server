@@ -116,9 +116,17 @@ export class HttpFetcher implements ContentFetcher {
       try {
         let currentUrl = source;
         let redirectCount = 0;
+        // Generate the fingerprint once per attempt so every hop in a redirect chain
+        // presents consistent headers (a changing User-Agent/locale mid-chain can
+        // itself provoke redirects).
+        const fingerprint = this.fingerprintGenerator.generateHeaders();
+        // Persist cookies across the redirect chain. Some sites set an auth/consent
+        // cookie and redirect (e.g. developer.android.com's OAuth auto-signin flow);
+        // without a cookie jar the redirect re-triggers on every hop and loops until
+        // MAX_REDIRECTS is hit ("Too many redirects").
+        const cookieJar = new Map<string, string>();
 
         while (true) {
-          const fingerprint = this.fingerprintGenerator.generateHeaders();
           const headers = withMarkdownPreferredAccept(
             {
               ...fingerprint,
@@ -126,6 +134,12 @@ export class HttpFetcher implements ContentFetcher {
             },
             options?.headers,
           );
+          // Send cookies accumulated from earlier hops in this redirect chain.
+          if (cookieJar.size > 0) {
+            headers.Cookie = Array.from(cookieJar.entries())
+              .map(([name, value]) => `${name}=${value}`)
+              .join("; ");
+          }
 
           // Add If-None-Match header for conditional requests if ETag is provided
           if (options?.etag) {
@@ -160,6 +174,26 @@ export class HttpFetcher implements ContentFetcher {
 
           const response = await axios.get(currentUrl, config);
 
+          // Accumulate Set-Cookie headers so the next hop in the redirect chain
+          // carries them — this breaks auth/consent redirect loops that depend on a
+          // cookie being echoed back.
+          const setCookies = response.headers["set-cookie"];
+          if (Array.isArray(setCookies)) {
+            for (const raw of setCookies) {
+              const first = raw.split(";", 1)[0];
+              const eq = first.indexOf("=");
+              if (eq > 0) {
+                const name = first.slice(0, eq).trim();
+                const value = first.slice(eq + 1).trim();
+                if (value) {
+                  cookieJar.set(name, value);
+                } else {
+                  cookieJar.delete(name);
+                }
+              }
+            }
+          }
+
           // 304 Not Modified is a conditional response, not a redirect. Handle
           // it before the 30x redirect branch so the missing Location header
           // does not trip the redirect check.
@@ -188,7 +222,7 @@ export class HttpFetcher implements ContentFetcher {
 
             if (redirectCount >= MAX_REDIRECTS) {
               throw new ScraperError(
-                `Too many redirects while fetching ${source}`,
+                `Too many redirects while fetching ${source} (exceeded ${MAX_REDIRECTS} hops; last redirect target: ${currentUrl})`,
                 false,
               );
             }
@@ -349,11 +383,13 @@ export class HttpFetcher implements ContentFetcher {
           continue;
         }
 
-        // Not a 5xx error or max retries reached
+        // Not a 5xx error or max retries reached. Surface the HTTP status (or the
+        // transport error code when there is no response) so callers see *why* it failed.
+        const reason = status ? `HTTP ${status}` : (code ?? "no response");
         throw new ScraperError(
           `Failed to fetch ${source} after ${
             attempt + 1
-          } attempts: ${axiosError.message ?? "Unknown error"}`,
+          } attempts (${reason}): ${axiosError.message ?? "Unknown error"}`,
           true,
           errorCause,
         );

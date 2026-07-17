@@ -12,6 +12,13 @@ const INDEX_FILE_PATTERN = /^index(\.[a-z0-9]+)?$/i;
  * - Last segment matches /^index(\.[a-z0-9]+)?$/i (case-insensitive, extension optional)
  *   → parent directory with trailing slash. Covers /api/index, /api/index.html, /api/Index.HTML, etc.
  * - Otherwise → path with trailing slash appended (path is treated as a directory)
+ *
+ * NOTE: A non-index file root (e.g. `/docs/home.html`) intentionally scopes to
+ * *itself only* (`/docs/home.html/`), so subpages indexes just that page. Widening
+ * a bare file into its parent directory was tried and rejected: it re-introduced the
+ * dot-heuristic over-fire that mis-reads version paths like `/v1.0` as a file and
+ * pulls in unrelated siblings. To crawl a whole section from a file-like landing
+ * page, use a directory URL (trailing `/`) or scope="hostname".
  */
 export function computeBaseDirectory(pathname: string): string {
   if (pathname === "" || pathname === "/") return "/";

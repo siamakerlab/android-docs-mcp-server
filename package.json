@@ -1,6 +1,6 @@
 {
   "name": "@siamakerlab/android-docs-mcp-server",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Android/Kotlin/Flutter-focused fork of the docs MCP server: index and search version-correct library documentation",
   "type": "module",
   "bin": {

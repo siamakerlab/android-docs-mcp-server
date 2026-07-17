@@ -649,4 +649,82 @@ describe("HttpFetcher", () => {
       expect(resultWithoutEtag.etag).toBeUndefined();
     });
   });
+
+  describe("redirect chain: cookie persistence and stable fingerprint (issue #1)", () => {
+    beforeEach(() => {
+      mockedAxios.get.mockReset();
+    });
+
+    it("replays Set-Cookie across hops and reuses one fingerprint (developer.android.com auto-signin loop)", async () => {
+      const fetcher = createFetcher();
+      const base = "https://developer.android.com/build";
+
+      // Hop 1: server sets an auto-signin cookie and redirects to the OAuth endpoint.
+      mockedAxios.get.mockResolvedValueOnce({
+        status: 302,
+        headers: {
+          location: "https://developer.android.com/oauth2authorize?auto_signin=True",
+          "set-cookie": ["signin=autosignin; Path=/; HttpOnly"],
+        },
+      });
+      // Hop 2: with the cookie echoed back, the OAuth endpoint returns us to the page.
+      mockedAxios.get.mockResolvedValueOnce({
+        status: 302,
+        headers: { location: base },
+      });
+      // Hop 3: real content is served.
+      mockedAxios.get.mockResolvedValueOnce({
+        data: Buffer.from("<html><body>Configure your build</body></html>", "utf-8"),
+        status: 200,
+        headers: { "content-type": "text/html" },
+        request: { res: { responseUrl: base } },
+      });
+
+      const result = await fetcher.fetch(base);
+      expect(result.status).toBe("success");
+
+      const calls = mockedAxios.get.mock.calls as unknown as Array<
+        [string, { headers: Record<string, string> }]
+      >;
+      expect(calls).toHaveLength(3);
+
+      // The cookie captured on hop 1 must be replayed on every following hop —
+      // without this, developer.android.com re-triggers auto-signin each hop and
+      // the chain exceeds MAX_REDIRECTS ("Too many redirects").
+      expect(calls[1][1].headers.Cookie).toContain("signin=autosignin");
+      expect(calls[2][1].headers.Cookie).toContain("signin=autosignin");
+
+      // A single browser fingerprint is generated per attempt and reused on every hop.
+      const uaOf = (c: [string, { headers: Record<string, string> }]) =>
+        c[1].headers["User-Agent"] ?? c[1].headers["user-agent"];
+      expect(uaOf(calls[0])).toBeDefined();
+      expect(uaOf(calls[1])).toBe(uaOf(calls[0]));
+      expect(uaOf(calls[2])).toBe(uaOf(calls[0]));
+    });
+
+    it("throws a redirect-count error naming the hop limit and last target (issue #4)", async () => {
+      const fetcher = createFetcher();
+      // Endless redirect loop → exceeds MAX_REDIRECTS.
+      mockedAxios.get.mockResolvedValue({
+        status: 302,
+        headers: { location: "https://example.com/loop" },
+      });
+
+      await expect(fetcher.fetch("https://example.com/start")).rejects.toThrow(
+        /Too many redirects.*hops.*last redirect target: https:\/\/example\.com\/loop/,
+      );
+    });
+
+    it("includes the HTTP status in the final fetch error (issue #4)", async () => {
+      const fetcher = createFetcher();
+      mockedAxios.get.mockRejectedValue({
+        response: { status: 503 },
+        message: "Request failed with status code 503",
+      });
+
+      await expect(
+        fetcher.fetch("https://example.com", { maxRetries: 0, retryDelay: 1 }),
+      ).rejects.toThrow(/HTTP 503/);
+    });
+  });
 });

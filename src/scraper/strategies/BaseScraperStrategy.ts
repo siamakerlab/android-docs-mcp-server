@@ -295,7 +295,10 @@ export abstract class BaseScraperStrategy implements ScraperStrategy {
             );
 
             if (item.depth === 0 && !isRefreshDeletion && !hasNewFallbackQueueItem) {
-              throw new ScraperError(`Root page not found: ${item.url}`, false);
+              throw new ScraperError(
+                `Root page not found (HTTP 404): ${item.url}`,
+                false,
+              );
             }
 
             if (!isRefreshDeletion) {

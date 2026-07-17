@@ -42,7 +42,12 @@ export function createMcpServerInstance(
       "scrape_docs",
       "Scrape and index documentation from a URL for a library. Use this tool to index a new library or a new version.",
       {
-        url: z.string().url().describe("Documentation root URL to scrape."),
+        url: z
+          .string()
+          .url()
+          .describe(
+            "Documentation root URL to scrape. For scope='subpages', prefer a directory URL ending in '/' (e.g. https://kotlinlang.org/docs/) — a file-like root such as .../home.html indexes only that single page. To crawl a whole section from a file landing page, use a directory URL or scope='hostname'.",
+          ),
         library: z.string().trim().describe("Library name."),
         version: z.string().trim().optional().describe("Library version (optional)."),
         maxPages: z
@@ -61,7 +66,9 @@ export function createMcpServerInstance(
           .enum(["subpages", "hostname", "domain"])
           .optional()
           .default("subpages")
-          .describe("Crawling boundary: 'subpages', 'hostname', or 'domain'."),
+          .describe(
+            "Crawling boundary: 'subpages' (paths under the URL's directory), 'hostname' (whole host), or 'domain' (registrable domain). Note: with 'subpages', a file-like root (.../home.html) is scoped to itself only; use a trailing-slash directory URL or 'hostname' to crawl siblings.",
+          ),
         followRedirects: z
           .boolean()
           .optional()
@@ -71,6 +78,18 @@ export function createMcpServerInstance(
           .boolean()
           .optional()
           .describe("Preserve hash fragments for hash-routed SPA documentation sites."),
+        includePatterns: z
+          .array(z.string())
+          .optional()
+          .describe(
+            "Only crawl URLs matching these glob or /regex/ patterns (wrap regex in slashes). Useful to isolate one topic on a flat docs site.",
+          ),
+        excludePatterns: z
+          .array(z.string())
+          .optional()
+          .describe(
+            "Skip URLs matching these glob or /regex/ patterns (takes precedence over include).",
+          ),
       },
       {
         title: "Scrape New Library Documentation",
@@ -86,6 +105,8 @@ export function createMcpServerInstance(
         scope,
         followRedirects,
         preserveHashes,
+        includePatterns,
+        excludePatterns,
       }) => {
         // Track MCP tool usage
         telemetry.track(TelemetryEvent.TOOL_USED, {
@@ -113,6 +134,8 @@ export function createMcpServerInstance(
               scope,
               followRedirects,
               preserveHashes,
+              includePatterns,
+              excludePatterns,
             },
           });
 
