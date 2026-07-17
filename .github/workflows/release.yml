@@ -90,7 +90,13 @@ jobs:
         run: |
           version='${{ steps.release-mode.outputs.release_version }}'
           npm version "$version" --no-git-tag-version
-          npm publish --access public
+          # Pre-release versions (e.g. 2.4.2-android.1) require an explicit npm dist-tag;
+          # publish those under `android`, and stable versions under `latest`.
+          if [[ "$version" == *-* ]]; then
+            npm publish --access public --tag android
+          else
+            npm publish --access public
+          fi
 
       - name: Commit manual version bump
         if: steps.release-mode.outputs.manual_release == 'true'
