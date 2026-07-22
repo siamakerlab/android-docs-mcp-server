@@ -328,7 +328,14 @@ function renderGroups(sections: DoccGroupSection[], refs: DoccReferences): strin
 function extractDoccLinks(refs: DoccReferences): string[] {
   const urls = new Set<string>();
   for (const ref of Object.values(refs)) {
-    if (ref.url?.startsWith("/documentation/")) urls.add(ref.url);
+    // Internal documentation pages are site-absolute paths containing a
+    // `/documentation/` segment. The exact prefix varies by host — Apple uses
+    // `/documentation/…`, Swift Package Index `/{owner}/{repo}/{ref}/documentation/…`,
+    // docs.swift.org `/{book}/documentation/…` — so match the segment, not a fixed
+    // prefix. Absolute URLs (videos, external links) are excluded.
+    if (ref.url?.startsWith("/") && ref.url.includes("/documentation/")) {
+      urls.add(ref.url);
+    }
   }
   return [...urls];
 }

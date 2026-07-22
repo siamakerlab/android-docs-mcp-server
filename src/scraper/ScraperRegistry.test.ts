@@ -12,6 +12,8 @@ import { LocalFileStrategy } from "./strategies/LocalFileStrategy";
 import { NpmScraperStrategy } from "./strategies/NpmScraperStrategy";
 import { PubDevScraperStrategy } from "./strategies/PubDevScraperStrategy";
 import { PyPiScraperStrategy } from "./strategies/PyPiScraperStrategy";
+import { SwiftOrgDocsStrategy } from "./strategies/SwiftOrgDocsStrategy";
+import { SwiftPackageIndexStrategy } from "./strategies/SwiftPackageIndexStrategy";
 import { WebScraperStrategy } from "./strategies/WebScraperStrategy";
 
 describe("ScraperRegistry", () => {
@@ -93,6 +95,22 @@ describe("ScraperRegistry", () => {
       "https://developer.apple.com/documentation/swiftui/view",
     );
     expect(strategy).toBeInstanceOf(AppleDeveloperDocsStrategy);
+  });
+
+  it("should return SwiftPackageIndexStrategy for swiftpackageindex.com URLs", () => {
+    const registry = new ScraperRegistry(appConfig);
+    const strategy = registry.getStrategy(
+      "https://swiftpackageindex.com/pointfreeco/swift-composable-architecture/1.15.0/documentation/composablearchitecture",
+    );
+    expect(strategy).toBeInstanceOf(SwiftPackageIndexStrategy);
+  });
+
+  it("should return SwiftOrgDocsStrategy for docs.swift.org URLs", () => {
+    const registry = new ScraperRegistry(appConfig);
+    const strategy = registry.getStrategy(
+      "https://docs.swift.org/swift-book/documentation/the-swift-programming-language",
+    );
+    expect(strategy).toBeInstanceOf(SwiftOrgDocsStrategy);
   });
 
   it("should return WebScraperStrategy for generic HTTP URLs", () => {

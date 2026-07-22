@@ -12,6 +12,8 @@ import { LocalFileStrategy } from "./strategies/LocalFileStrategy";
 import { NpmScraperStrategy } from "./strategies/NpmScraperStrategy";
 import { PubDevScraperStrategy } from "./strategies/PubDevScraperStrategy";
 import { PyPiScraperStrategy } from "./strategies/PyPiScraperStrategy";
+import { SwiftOrgDocsStrategy } from "./strategies/SwiftOrgDocsStrategy";
+import { SwiftPackageIndexStrategy } from "./strategies/SwiftPackageIndexStrategy";
 import { WebScraperStrategy } from "./strategies/WebScraperStrategy";
 import type { ScraperStrategy } from "./types";
 
@@ -82,6 +84,16 @@ export class ScraperRegistry {
     if (isAppleDeveloperDocsUrl(url)) {
       logger.debug(`Using strategy "AppleDeveloperDocsStrategy" for URL: ${url}`);
       return new AppleDeveloperDocsStrategy(this.config);
+    }
+
+    if (isSwiftPackageIndexUrl(url)) {
+      logger.debug(`Using strategy "SwiftPackageIndexStrategy" for URL: ${url}`);
+      return new SwiftPackageIndexStrategy(this.config);
+    }
+
+    if (isSwiftOrgDocsUrl(url)) {
+      logger.debug(`Using strategy "SwiftOrgDocsStrategy" for URL: ${url}`);
+      return new SwiftOrgDocsStrategy(this.config);
     }
 
     if (isGitHubUrl(url)) {
@@ -168,6 +180,22 @@ function isKotlinLangUrl(url: string): boolean {
 function isAppleDeveloperDocsUrl(url: string): boolean {
   try {
     return new URL(url).hostname === "developer.apple.com";
+  } catch {
+    return false;
+  }
+}
+
+function isSwiftPackageIndexUrl(url: string): boolean {
+  try {
+    return new URL(url).hostname === "swiftpackageindex.com";
+  } catch {
+    return false;
+  }
+}
+
+function isSwiftOrgDocsUrl(url: string): boolean {
+  try {
+    return new URL(url).hostname === "docs.swift.org";
   } catch {
     return false;
   }

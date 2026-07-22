@@ -130,6 +130,15 @@
       "title": "WWDC Videos",
       "type": "link",
       "url": "https://developer.apple.com/videos/wwdc"
+    },
+    "doc://spi/documentation/composablearchitecture/store": {
+      "identifier": "doc://spi/documentation/composablearchitecture/store",
+      "title": "Store",
+      "kind": "symbol",
+      "role": "symbol",
+      "type": "topic",
+      "url": "/pointfreeco/swift-composable-architecture/1.15.0/documentation/composablearchitecture/store",
+      "abstract": [{ "type": "text", "text": "A store represents the runtime of a feature." }]
     }
   }
 }

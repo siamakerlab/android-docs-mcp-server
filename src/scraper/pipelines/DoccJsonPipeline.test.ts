@@ -104,6 +104,12 @@ describe("DoccJsonPipeline", () => {
       expect(links).toContain("/documentation/swiftui/view");
       expect(links).toContain("/documentation/swiftui/shape");
       expect(links).toContain("/documentation/swiftui/view/body-swift.property");
+      // Host-agnostic: a Swift Package Index-style path (with owner/repo/ref
+      // prefix before /documentation/) is captured too, not just Apple-style.
+      expect(links).toContain(
+        "/pointfreeco/swift-composable-architecture/1.15.0/documentation/composablearchitecture/store",
+      );
+      // Absolute external URLs are excluded.
       expect(links).not.toContain("https://developer.apple.com/videos/wwdc");
     });
 

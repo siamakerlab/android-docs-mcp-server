@@ -407,7 +407,7 @@ version-awareness.
 | Phase | Theme | Primary code surface | Status |
 |------|-------|----------------------|--------|
 | i1 | Source-code intelligence (Swift / Obj-C) | `src/splitter/treesitter/parsers/` | ⬜ planned |
-| i2 | Apple ecosystem registries | `src/scraper/strategies/` | 🟡 developer.apple.com landed |
+| i2 | Apple ecosystem registries | `src/scraper/strategies/` | 🟡 apple + SPI + swift.org landed |
 | i3 | DocC render-JSON pipeline | `src/scraper/` (new JSON-native pipeline) | 🟡 pipeline + renderer landed |
 | i4 | iOS project-aware version resolution | `src/manifest/`, `src/tools/` | ⬜ planned |
 | i5 | Search quality tuning for iOS | `tests/search-eval/` | ⬜ planned |
@@ -491,13 +491,17 @@ URL or a Swift package coordinate. Model on `AndroidDevDocsScraperStrategy`,
   hands it to the i3 `DoccJsonPipeline`, and drives crawl from the JSON `references` map.
   Registered in `ScraperRegistry.ts`; unit-tested (URL rewrite + round-trip + registry
   dispatch).
-- ⬜ **SwiftPackageIndexStrategy** — `swiftpackageindex.com/{owner}/{repo}/{version}/documentation/{target}`.
-  This is Swift's **javadoc.io / pub.dev equivalent** (auto-generated, auto-hosted,
-  versioned DocC for SPM packages), so it anchors the package-coordinate → doc-URL mapping
-  in i4. **Gotcha: Cloudflare-protected** (naive fetch → HTTP 403) even though the JSON is
-  static — needs browser-grade headers or the Playwright path. See §22 open question.
-- ⬜ **SwiftOrgDocsStrategy** — `docs.swift.org/swift-book/…` (The Swift Programming
-  Language + stdlib, DocC) and `swift.org/documentation/`.
+- ✅ **SwiftPackageIndexStrategy** — `swiftpackageindex.com/{owner}/{repo}/{version}/documentation/{target}`.
+  Swift's **javadoc.io / pub.dev equivalent** (auto-generated, auto-hosted, versioned DocC
+  for SPM packages), so it anchors the package-coordinate → doc-URL mapping in i4. Extends
+  the shared `BaseDoccStrategy`; render-JSON rewrite (`/documentation/…` →
+  `/data/documentation/….json`) shared with docs.swift.org via `doccUrl.ts`; registered and
+  unit-tested. **Runtime caveat (unchanged): Cloudflare-protected** (naive fetch → HTTP 403)
+  even though the JSON is static — relies on `AutoDetectFetcher`'s browser fallback, which
+  needs a working Playwright install. See §22 open question.
+- ✅ **SwiftOrgDocsStrategy** — `docs.swift.org/swift-book/…` (The Swift Programming
+  Language + stdlib, DocC). Same shared base + `doccUrl.ts` rewrite; registered and
+  unit-tested. (`swift.org/documentation/` landing pages remain generic-web.)
 - ⬜ **CocoaPods = metadata/version only.** CocoaDocs was sunset; `cocoapods.org` hosts no
   API-doc content. Map a pod coordinate → Swift Package Index or the podspec's
   `documentation_url`, never to a cocoapods.org doc page.
