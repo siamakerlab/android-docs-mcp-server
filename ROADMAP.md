@@ -407,8 +407,8 @@ version-awareness.
 | Phase | Theme | Primary code surface | Status |
 |------|-------|----------------------|--------|
 | i1 | Source-code intelligence (Swift / Obj-C) | `src/splitter/treesitter/parsers/` | ⬜ planned |
-| i2 | Apple ecosystem registries | `src/scraper/strategies/` | ⬜ planned |
-| i3 | DocC render-JSON pipeline | `src/scraper/` (new JSON-native pipeline) | ⬜ planned |
+| i2 | Apple ecosystem registries | `src/scraper/strategies/` | 🟡 developer.apple.com landed |
+| i3 | DocC render-JSON pipeline | `src/scraper/` (new JSON-native pipeline) | 🟡 pipeline + renderer landed |
 | i4 | iOS project-aware version resolution | `src/manifest/`, `src/tools/` | ⬜ planned |
 | i5 | Search quality tuning for iOS | `tests/search-eval/` | ⬜ planned |
 | i6 | iOS agent skills & DX | `skills/`, docs | ⬜ planned |
@@ -485,9 +485,12 @@ URL or a Swift package coordinate. Model on `AndroidDevDocsScraperStrategy`,
 `JavadocScraperStrategy`, `PubDevScraperStrategy`; register in `ScraperRegistry.ts`.
 
 **Tasks**
-- ⬜ **AppleDeveloperDocsStrategy** — `developer.apple.com/documentation/…`. Recognizes
-  the host and rewrites each page to its render-JSON twin (handed to the i3 pipeline). The
-  Apple analogue of `AndroidDevDocsScraperStrategy`.
+- ✅ **AppleDeveloperDocsStrategy** — `developer.apple.com/documentation/…`. Extends
+  `BaseScraperStrategy` (like `GitHubScraperStrategy`), rewrites each page to its
+  render-JSON twin (`/tutorials/data/…​.json`), fetches it with `Accept: application/json`,
+  hands it to the i3 `DoccJsonPipeline`, and drives crawl from the JSON `references` map.
+  Registered in `ScraperRegistry.ts`; unit-tested (URL rewrite + round-trip + registry
+  dispatch).
 - ⬜ **SwiftPackageIndexStrategy** — `swiftpackageindex.com/{owner}/{repo}/{version}/documentation/{target}`.
   This is Swift's **javadoc.io / pub.dev equivalent** (auto-generated, auto-hosted,
   versioned DocC for SPM packages), so it anchors the package-coordinate → doc-URL mapping
@@ -527,21 +530,31 @@ any headless-browser path for Apple / docs.swift.org. (Unlike Android Phase 3, t
 **no generator chrome to strip** — the JSON is already structured.)
 
 **Tasks**
-- ⬜ **DocC JSON fetcher + detection** — detect DocC hosts, fetch the
-  `data/documentation/*.json` twin of a requested page, and walk `references` as the crawl
-  frontier.
-- ⬜ **DocC JSON → Markdown renderer** — flatten `abstract`; `primaryContentSections`
-  (`declarations` `tokens` → a code fence preserving full signatures; prose `content`);
-  `topicSections`; `relationshipsSections` (Conforms To / Inherited By); `seeAlsoSections`.
-  Preserve fully-qualified symbol names so search matches `Type.method(_:)`.
+- ✅ **DocC JSON fetcher + detection** — `DoccJsonPipeline.canProcess` sniffs the DocC
+  discriminators (`schemaVersion` + `references` + a documentation section) so it claims
+  DocC JSON without touching ordinary JSON; the fetch + `references`-as-frontier wiring
+  lives in `AppleDeveloperDocsStrategy` (i2).
+- ✅ **DocC JSON → Markdown renderer** — `DoccJsonPipeline` flattens `abstract`;
+  `primaryContentSections` (`declarations` `tokens` → a `swift` code fence preserving the
+  full signature verbatim; prose `content` with inline references/`codeVoice`/code
+  listings); `topicSections`; `relationshipsSections`; `seeAlsoSections`. Chunks via the
+  shared `SemanticMarkdownSplitter` + `GreedySplitter`. Unit-tested against a
+  `test/fixtures/docc-render.json` fixture and smoke-verified on the real 139 KB SwiftUI
+  `View` render JSON (197 links, 20 chunks, signature preserved).
 - ⬜ Handle `schemaVersion` variance and the **Swift / Objective-C `variants`** split
   (index the language the user targets; don't collapse both into noise).
-- ⬜ Fixtures from **real render JSON** (SwiftUI `View`, a TSPL page, one SPI package) +
-  unit tests; live coverage as a sibling of `test/html-pipeline-live-e2e.test.ts`.
+- ⬜ Fixtures from **real render JSON** (a TSPL page, one SPI package) + live coverage as a
+  sibling of `test/html-pipeline-live-e2e.test.ts`. (SwiftUI `View` fixture landed.)
 
 **Done when:** an indexed DocC page yields Markdown whose signatures and descriptions
 survive intact, verified against JSON fixtures, with **no** headless-browser dependency
 for Apple / docs.swift.org.
+
+**Status (2026-07-23) — i3 core landed.** `DoccJsonPipeline` + `AppleDeveloperDocsStrategy`
+ship the render-JSON path end-to-end for `developer.apple.com` (no browser), unit-tested
+and smoke-verified on real Apple docs. Remaining: `variants` (Swift/Obj-C) handling,
+`schemaVersion` variance, live-site E2E, and the sibling DocC hosts (Swift Package Index,
+docs.swift.org) which reuse the same pipeline with a different URL-rewrite step.
 
 ---
 

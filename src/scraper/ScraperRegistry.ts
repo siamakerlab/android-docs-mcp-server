@@ -3,6 +3,7 @@ import { ScraperError } from "../utils/errors";
 import { logger } from "../utils/logger";
 import { validateUrl } from "../utils/url";
 import { AndroidDevDocsScraperStrategy } from "./strategies/AndroidDevDocsScraperStrategy";
+import { AppleDeveloperDocsStrategy } from "./strategies/AppleDeveloperDocsStrategy";
 import { GitHubScraperStrategy } from "./strategies/GitHubScraperStrategy";
 import { GradlePluginScraperStrategy } from "./strategies/GradlePluginScraperStrategy";
 import { JavadocScraperStrategy } from "./strategies/JavadocScraperStrategy";
@@ -76,6 +77,11 @@ export class ScraperRegistry {
     if (isKotlinLangUrl(url)) {
       logger.debug(`Using strategy "KotlinLangScraperStrategy" for URL: ${url}`);
       return new KotlinLangScraperStrategy(this.config);
+    }
+
+    if (isAppleDeveloperDocsUrl(url)) {
+      logger.debug(`Using strategy "AppleDeveloperDocsStrategy" for URL: ${url}`);
+      return new AppleDeveloperDocsStrategy(this.config);
     }
 
     if (isGitHubUrl(url)) {
@@ -154,6 +160,14 @@ function isKotlinLangUrl(url: string): boolean {
   try {
     const { hostname } = new URL(url);
     return ["kotlinlang.org", "www.kotlinlang.org"].includes(hostname);
+  } catch {
+    return false;
+  }
+}
+
+function isAppleDeveloperDocsUrl(url: string): boolean {
+  try {
+    return new URL(url).hostname === "developer.apple.com";
   } catch {
     return false;
   }

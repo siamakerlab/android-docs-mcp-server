@@ -1,0 +1,135 @@
+{
+  "schemaVersion": { "major": 0, "minor": 3, "patch": 0 },
+  "kind": "symbol",
+  "identifier": {
+    "url": "doc://com.apple.SwiftUI/documentation/SwiftUI/View",
+    "interfaceLanguage": "swift"
+  },
+  "metadata": {
+    "title": "View",
+    "roleHeading": "Protocol",
+    "role": "symbol",
+    "modules": [{ "name": "SwiftUI" }],
+    "platforms": [{ "name": "iOS", "introducedAt": "13.0" }]
+  },
+  "abstract": [
+    {
+      "type": "text",
+      "text": "A type that represents part of your app’s user interface and provides modifiers that you use to configure views."
+    }
+  ],
+  "primaryContentSections": [
+    {
+      "kind": "declarations",
+      "declarations": [
+        {
+          "platforms": ["iOS", "macOS"],
+          "tokens": [
+            { "kind": "attribute", "text": "@MainActor" },
+            { "kind": "text", "text": " " },
+            { "kind": "keyword", "text": "protocol" },
+            { "kind": "text", "text": " " },
+            { "kind": "identifier", "text": "View" }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "content",
+      "content": [
+        { "type": "heading", "level": 2, "text": "Overview", "anchor": "overview" },
+        {
+          "type": "paragraph",
+          "inlineContent": [
+            { "type": "text", "text": "Create a custom view by declaring a type that conforms to the " },
+            {
+              "type": "reference",
+              "identifier": "doc://com.apple.SwiftUI/documentation/SwiftUI/View",
+              "isActive": true
+            },
+            { "type": "text", "text": " protocol. Implement the required " },
+            { "type": "codeVoice", "code": "body" },
+            { "type": "text", "text": " computed property to provide the content." }
+          ]
+        },
+        {
+          "type": "codeListing",
+          "syntax": "swift",
+          "code": [
+            "struct MyView: View {",
+            "    var body: some View {",
+            "        Text(\"Hello, world!\")",
+            "    }",
+            "}"
+          ]
+        }
+      ]
+    }
+  ],
+  "topicSections": [
+    {
+      "title": "Creating a view",
+      "identifiers": [
+        "doc://com.apple.SwiftUI/documentation/SwiftUI/View/body-swift.property",
+        "doc://com.apple.SwiftUI/documentation/SwiftUI/Shape"
+      ]
+    }
+  ],
+  "relationshipsSections": [
+    {
+      "type": "conformingTypes",
+      "title": "Conforming Types",
+      "identifiers": ["doc://com.apple.SwiftUI/documentation/SwiftUI/Shape"]
+    }
+  ],
+  "seeAlsoSections": [
+    {
+      "title": "Related Documentation",
+      "identifiers": ["doc://com.apple.SwiftUI/documentation/SwiftUI/Shape"]
+    }
+  ],
+  "references": {
+    "doc://com.apple.SwiftUI/documentation/SwiftUI/View": {
+      "identifier": "doc://com.apple.SwiftUI/documentation/SwiftUI/View",
+      "title": "View",
+      "kind": "symbol",
+      "role": "symbol",
+      "type": "topic",
+      "url": "/documentation/swiftui/view",
+      "abstract": [
+        { "type": "text", "text": "A type that represents part of your app’s user interface." }
+      ],
+      "fragments": [
+        { "kind": "keyword", "text": "protocol" },
+        { "kind": "text", "text": " " },
+        { "kind": "identifier", "text": "View" }
+      ]
+    },
+    "doc://com.apple.SwiftUI/documentation/SwiftUI/Shape": {
+      "identifier": "doc://com.apple.SwiftUI/documentation/SwiftUI/Shape",
+      "title": "Shape",
+      "kind": "symbol",
+      "role": "symbol",
+      "type": "topic",
+      "url": "/documentation/swiftui/shape",
+      "abstract": [
+        { "type": "text", "text": "A 2D shape that you can use when drawing a view." }
+      ]
+    },
+    "doc://com.apple.SwiftUI/documentation/SwiftUI/View/body-swift.property": {
+      "identifier": "doc://com.apple.SwiftUI/documentation/SwiftUI/View/body-swift.property",
+      "title": "body",
+      "kind": "symbol",
+      "role": "symbol",
+      "type": "topic",
+      "url": "/documentation/swiftui/view/body-swift.property",
+      "abstract": [{ "type": "text", "text": "The content and behavior of the view." }]
+    },
+    "https://developer.apple.com/videos/wwdc": {
+      "identifier": "https://developer.apple.com/videos/wwdc",
+      "title": "WWDC Videos",
+      "type": "link",
+      "url": "https://developer.apple.com/videos/wwdc"
+    }
+  }
+}

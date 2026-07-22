@@ -3,6 +3,7 @@ import { loadConfig } from "../utils/config";
 import { ScraperError } from "../utils/errors";
 import { ScraperRegistry } from "./ScraperRegistry";
 import { AndroidDevDocsScraperStrategy } from "./strategies/AndroidDevDocsScraperStrategy";
+import { AppleDeveloperDocsStrategy } from "./strategies/AppleDeveloperDocsStrategy";
 import { GitHubScraperStrategy } from "./strategies/GitHubScraperStrategy";
 import { GradlePluginScraperStrategy } from "./strategies/GradlePluginScraperStrategy";
 import { JavadocScraperStrategy } from "./strategies/JavadocScraperStrategy";
@@ -84,6 +85,14 @@ describe("ScraperRegistry", () => {
       "https://kotlinlang.org/docs/coroutines-guide.html",
     );
     expect(strategy).toBeInstanceOf(KotlinLangScraperStrategy);
+  });
+
+  it("should return AppleDeveloperDocsStrategy for developer.apple.com URLs", () => {
+    const registry = new ScraperRegistry(appConfig);
+    const strategy = registry.getStrategy(
+      "https://developer.apple.com/documentation/swiftui/view",
+    );
+    expect(strategy).toBeInstanceOf(AppleDeveloperDocsStrategy);
   });
 
   it("should return WebScraperStrategy for generic HTTP URLs", () => {
