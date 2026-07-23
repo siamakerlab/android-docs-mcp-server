@@ -1,5 +1,9 @@
 {
   "schemaVersion": { "major": 0, "minor": 3, "patch": 0 },
+  "variants": [
+    { "traits": [{ "interfaceLanguage": "swift" }], "paths": ["/documentation/swiftui/view"] },
+    { "traits": [{ "interfaceLanguage": "occ" }], "paths": ["/documentation/swiftui/view"] }
+  ],
   "kind": "symbol",
   "identifier": {
     "url": "doc://com.apple.SwiftUI/documentation/SwiftUI/View",

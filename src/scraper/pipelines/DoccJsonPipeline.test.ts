@@ -113,6 +113,16 @@ describe("DoccJsonPipeline", () => {
       expect(links).not.toContain("https://developer.apple.com/videos/wwdc");
     });
 
+    it("indexes the primary Swift node and ignores the objc language variant (no noise)", async () => {
+      const pipeline = new DoccJsonPipeline(config);
+      const md = (await pipeline.process(raw, baseOptions)).textContent ?? "";
+      // The primary render node is Swift; the objc `variants` entry is a separate
+      // render-JSON page, so its metadata must not leak into this document.
+      expect(md).toContain("# View");
+      expect(md).not.toContain("occ");
+      expect(md).not.toContain("interfaceLanguage");
+    });
+
     it("emits chunks for the assembled markdown", async () => {
       const pipeline = new DoccJsonPipeline(config);
       const result = await pipeline.process(raw, baseOptions);

@@ -559,8 +559,12 @@ any headless-browser path for Apple / docs.swift.org. (Unlike Android Phase 3, t
   shared `SemanticMarkdownSplitter` + `GreedySplitter`. Unit-tested against a
   `test/fixtures/docc-render.json` fixture and smoke-verified on the real 139 KB SwiftUI
   `View` render JSON (197 links, 20 chunks, signature preserved).
-- ⬜ Handle `schemaVersion` variance and the **Swift / Objective-C `variants`** split
-  (index the language the user targets; don't collapse both into noise).
+- 🟡 `schemaVersion` variance is handled (the parser reads every field defensively/
+  optionally, so minor schema drift doesn't break it). The **Swift / Objective-C `variants`**
+  split: the pipeline indexes the **primary (Swift) render node** and ignores the `variants`
+  array — the Obj-C variant is a separate render-JSON page — so the two languages aren't
+  collapsed into noise. Verified with a `variants`-bearing fixture. Dedicated Obj-C variant
+  indexing is deferred (low priority, gated on ObjC parsing overall).
 - ⬜ Fixtures from **real render JSON** (a TSPL page, one SPI package) + live coverage as a
   sibling of `test/html-pipeline-live-e2e.test.ts`. (SwiftUI `View` fixture landed.)
 
